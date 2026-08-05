@@ -25,7 +25,7 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "PUT_YOUR_TOKEN_HERE")
 
 # Price in Telegram Stars (XTR). 1 Star ~ $0.013-0.02 depending on region.
 # 150 Stars ~ roughly $2-3, adjust as you like.
-PREMIUM_PRICE_STARS = 150
+PREMIUM_PRICE_STARS = 99
 
 router = Router()
 
