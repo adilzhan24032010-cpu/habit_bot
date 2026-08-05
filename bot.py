@@ -204,7 +204,20 @@ async def send_reminders(bot: Bot):
             except Exception as e:
                 logger.warning(f"Failed to send reminder to {h['uid']}: {e}")
 
+# Замени 123456789 на ТВОЙ реальный Telegram ID
+ADMIN_ID = 123456789 
 
+@router.message(Command("give_me_premium"))
+async def cmd_give_me_premium(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        await message.answer("У вас нет доступа к этой команде 😉")
+        return
+
+    from datetime import timedelta
+    # Выдаём Premium ровно на 1 день (24 часа)
+    until = (datetime.utcnow() + timedelta(days=1)).isoformat()
+    db.set_premium(message.from_user.id, until)
+    await message.answer("🎉 Тестовый Premium успешно активирован на 1 день!")
 async def main():
     # Запускаем веб-сервер для Render
     await start_website()
