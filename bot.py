@@ -204,20 +204,30 @@ async def send_reminders(bot: Bot):
             except Exception as e:
                 logger.warning(f"Failed to send reminder to {h['uid']}: {e}")
 
-# Замени 123456789 на ТВОЙ реальный Telegram ID
-ADMIN_ID = 123456789 
+# Название твоего промокода (Jindawi)
+SECRET_PROMO = "PROMO1DAY"
 
-@router.message(Command("give_me_premium"))
-async def cmd_give_me_premium(message: Message):
-    if message.from_user.id != ADMIN_ID:
-        await message.answer("У вас нет доступа к этой команде 😉")
+@router.message(Command("promo"))
+async def cmd_promo(message: Message):
+    args = message.text.split()
+    
+    # Проверяем, ввёл ли юзер сам код после /promo
+    if len(args) < 2:
+        await message.answer("Введи промокод через пробел, например:\n`/promo PROMO1DAY`", parse_mode="Markdown")
         return
-
-    from datetime import timedelta
-    # Выдаём Premium ровно на 1 день (24 часа)
-    until = (datetime.utcnow() + timedelta(days=1)).isoformat()
-    db.set_premium(message.from_user.id, until)
-    await message.answer("🎉 Тестовый Premium успешно активирован на 1 день!")
+    
+    user_code = args[1].strip().upper()
+    
+    if user_code == SECRET_PROMO:
+        from datetime import datetime, timedelta
+        
+        # Выдаём Premium на 1 день от текущего момента
+        until = (datetime.utcnow() + timedelta(days=1)).isoformat()
+        db.set_premium(message.from_user.id, until)
+        
+        await message.answer("🎉 Ура! Промокод активирован! Тебе доступен 1 день Premium-подписки!")
+    else:
+        await message.answer("❌ Неверный или устаревший промокод.")
 async def main():
     # Запускаем веб-сервер для Render
     await start_website()
