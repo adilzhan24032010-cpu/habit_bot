@@ -1,3 +1,7 @@
+import os
+import asyncio
+from aiohttp 
+import web
 import asyncio
 import logging
 import os
@@ -25,10 +29,20 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "PUT_YOUR_TOKEN_HERE")
 
 # Price in Telegram Stars (XTR). 1 Star ~ $0.013-0.02 depending on region.
 # 150 Stars ~ roughly $2-3, adjust as you like.
-PREMIUM_PRICE_STARS = 99
+PREMIUM_PRICE_STARS = 50
 
 router = Router()
+async def handle(request):
+    return web.Response(text="Bot is running!")
 
+async def start_website():
+    app = web.Application()
+    app.router.add_get("/", handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
 
 def main_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
@@ -189,7 +203,9 @@ async def send_reminders(bot: Bot):
                 logger.warning(f"Failed to send reminder to {h['uid']}: {e}")
 
 
-async def main():
+async def main(async def main():
+    await start_website()  # <-- ДОБАВИТЬ ЭТУ СТРОЧКУ
+    # дальше идет твой dp.start_polling(bot)):
     db.init_db()
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher()
